@@ -1,0 +1,165 @@
+{
+  "name": "weather(aster-5/20/2026)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        -128
+      ],
+      "id": "46af7dbb-bbab-43ef-a549-aa4d60cbf808",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://geocoding-api.open-meteo.com/v1/search?name=Yangon&count=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -336,
+        0
+      ],
+      "id": "f6ad546d-5d60-435d-b42f-be5e3d343224",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "990abd1f-3db8-4179-9397-88590299c8e7",
+              "name": "lat",
+              "value": "={{ $json.results[0].latitude }}",
+              "type": "number"
+            },
+            {
+              "id": "28d497bb-f011-479b-a68d-531e71bcbc8d",
+              "name": "long",
+              "value": "={{ $json.results[0].longitude }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -112,
+        -128
+      ],
+      "id": "088219cd-14fc-4cb1-bfaf-78d2cafcd314",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "latitude",
+              "value": "={{ $json.lat }}"
+            },
+            {
+              "name": "longitude",
+              "value": "={{ $json.long }}"
+            },
+            {
+              "name": "current",
+              "value": "temperature_2m"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        112,
+        0
+      ],
+      "id": "22f7bd90-3827-409e-b840-3ee5adeb435c",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        320,
+        0
+      ],
+      "id": "3b391e64-774f-41b5-ad1d-dd71d1b47cac",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a0c09260-fcf5-4f38-a81f-8bd107b83b97",
+  "meta": {
+    "instanceId": "fcf4d7a81f93897e4b7708d64f613e46163b3fd945e83a39373ba6993093037c"
+  },
+  "id": "eLBRrHNh2Z6W2n4q",
+  "tags": []
+}
